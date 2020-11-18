@@ -1,9 +1,9 @@
 const {Factory} = require('dhedge-sdk')
+require("dotenv").config()
 
 const CREATE_POOL = false
 const POOL_ADDRESS = process.env.POOL_ADDRESS;
 
-require("dotenv").config()
 const ethers = require('ethers');
 const BigNumber = require('ethers/utils/bignumber');
 const SynthetixJs = require('synthetix-js');
@@ -70,9 +70,22 @@ setInterval(async () => {
         let rebalancingFactor = totalInUSD / totalInUSDAboveTwoPercent;
         console.log("rebalancingFactor is: " + rebalancingFactor);
         for (let r in filteredResults) {
-            let result = results[r];
+            let result = filteredResults[r];
             console.log("checking synth: " + result.synth);
             await checkSynth(result.synth, result.totalSupply, result.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
+        }
+        let assets = await pool.getAssets();
+        for (let a in assets) {
+            let assetSynth = assets[a];
+            if (!filteredResults.flatMap(f => f.synth).includes(assetSynth)) {
+                for (let r in results) {
+                    let res = results[r];
+                    if (res.synth == assetSynth) {
+                        console.log("checking sub 2% synth: " + assetSynth);
+                        await checkSynth(res.synth, res.totalSupply, res.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
+                    }
+                }
+            }
         }
         console.log("Finished checking for rebalancing");
 
@@ -118,7 +131,8 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
                 try {
                     asset = await pool.getAsset(synth)
                 } catch (e) {
-                    await pool.addAsset(synth);
+                    let tx = await pool.addAsset(synth);
+                    await tx.wait(1);
                     try {
                         asset = await pool.getAsset(synth);
                     } catch (e) {
@@ -128,7 +142,7 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
                 if (asset) {
                     rebalancedSynthPercentageInDebt = Math.round((rebalancedSynthPercentageInDebt + Number.EPSILON) * 100) / 100;
                     let target = totalValue.mul(BigNumber.bigNumberify(rebalancedSynthPercentageInDebt * 100))
-                        .div(BigNumber.bigNumberify(10000)).sub(synthEffectiveValue);
+                        .div(BigNumber.bigNumberify(10000)).sub(synthEffectiveValue).abs();
                     if ((synthPercentageInPool - rebalancedSynthPercentageInDebt) < 0) {
                         console.log("Trading sUSD to " + target.toString() / 1e18 + " " + synth);
                         await pool.exchange('sUSD', target, synth)
