@@ -1,7 +1,7 @@
 const {Factory} = require('dhedge-sdk')
 
 const CREATE_POOL = false
-const POOL_ADDRESS = '0x64e62a3206704acbce13a8b9c194f792e61399e5';
+const POOL_ADDRESS = process.env.POOL_ADDRESS;
 
 require("dotenv").config()
 const ethers = require('ethers');
@@ -19,63 +19,68 @@ const fromBlock = "";
 const blockOptions = fromBlock ? {blockTag: Number(fromBlock)} : {};
 
 
-(async () => {
-    const factory = Factory.initialize()
+setInterval(async () => {
+    try {
+        const factory = Factory.initialize()
 
-    let exchangeRates = await factory.getExchangeRates()
+        let exchangeRates = await factory.getExchangeRates()
 
-    let pool;
+        let pool;
 
-    if (CREATE_POOL) {
+        if (CREATE_POOL) {
 
-        pool = await factory.createPool(false, 'Rebalancing', 'Rebalancing bot pool', [
-            'sETH', 'sDEFI', 'sBTC', 'iBCH'
-        ])
+            pool = await factory.createPool(false, 'Rebalancing', 'Rebalancing bot pool', [
+                'sETH', 'sDEFI', 'sBTC', 'iBCH'
+            ])
 
-    } else {
+        } else {
 
-        pool = await factory.loadPool(POOL_ADDRESS)
+            pool = await factory.loadPool(POOL_ADDRESS)
 
-    }
-
-    console.log('Summary', await pool.getSummary())
-
-    const synths = snxjs.contractSettings.synths.map(({name}) => name);
-    let totalInUSD = 0;
-    let totalInUSDAboveTwoPercent = 0;
-    const snxPrice = await snxjs.ExchangeRates.contract.rateForCurrency(toUtf8Bytes('SNX'), blockOptions) / 1e18;
-    let results = [];
-    for (let synth in synths) {
-        console.log("getting synth: " + synths[synth]);
-        await getSynthInfo(synths[synth], results);
-    }
-
-    console.log('got results');
-    let composition = await pool.getComposition()
-    results = results.sort((a, b) => a.totalSupplyInUSD > b.totalSupplyInUSD ? -1 : 1);
-    results.forEach(r => {
-        totalInUSD += r.totalSupplyInUSD;
-    });
-    console.log("Total value of all synths is: " + totalInUSD);
-    let filteredResults = [];
-    results.forEach(r => {
-        if ((r.totalSupplyInUSD * 100 / totalInUSD) > 2) {
-            filteredResults.push(r);
         }
-    });
-    filteredResults.forEach(r => {
-        totalInUSDAboveTwoPercent += r.totalSupplyInUSD;
-    });
-    console.log("Total value of all synths above 2% is: " + totalInUSDAboveTwoPercent);
-    let rebalancingFactor = totalInUSD / totalInUSDAboveTwoPercent;
-    console.log("rebalancingFactor is: " + rebalancingFactor);
-    for (let r in filteredResults) {
-        let result = results[r];
-        console.log("checking synth: " + result.synth);
-        await checkSynth(result.synth, result.totalSupply, result.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
+
+        console.log('Summary', await pool.getSummary())
+
+        const synths = snxjs.contractSettings.synths.map(({name}) => name);
+        let totalInUSD = 0;
+        let totalInUSDAboveTwoPercent = 0;
+        const snxPrice = await snxjs.ExchangeRates.contract.rateForCurrency(toUtf8Bytes('SNX'), blockOptions) / 1e18;
+        let results = [];
+        for (let synth in synths) {
+            console.log("getting synth: " + synths[synth]);
+            await getSynthInfo(synths[synth], results);
+        }
+
+        let composition = await pool.getComposition()
+        results = results.sort((a, b) => a.totalSupplyInUSD > b.totalSupplyInUSD ? -1 : 1);
+        results.forEach(r => {
+            totalInUSD += r.totalSupplyInUSD;
+        });
+        console.log("Total value of all synths is: " + totalInUSD);
+        let filteredResults = [];
+        results.forEach(r => {
+            if ((r.totalSupplyInUSD * 100 / totalInUSD) > 2) {
+                filteredResults.push(r);
+            }
+        });
+        filteredResults.forEach(r => {
+            totalInUSDAboveTwoPercent += r.totalSupplyInUSD;
+        });
+        console.log("Total value of all synths above 2% is: " + totalInUSDAboveTwoPercent);
+        let rebalancingFactor = totalInUSD / totalInUSDAboveTwoPercent;
+        console.log("rebalancingFactor is: " + rebalancingFactor);
+        for (let r in filteredResults) {
+            let result = results[r];
+            console.log("checking synth: " + result.synth);
+            await checkSynth(result.synth, result.totalSupply, result.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
+        }
+        console.log("Finished checking for rebalancing");
+
+    } catch (e) {
+        console.log("Error in periodic rebalancing check ", e);
     }
 
-})()
+}, 1000 * 60 * process.env.POLL_INTERVAL);
 
 async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor) {
     try {
@@ -89,13 +94,9 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
 
         let sUSD = await pool.getAsset('sUSD')
 
-        //await depositSUSD(sUSD, pool); // Deposit 2000sUSD
-
         let sUsdEffectiveValue = composition['sUSD'].balance
-        console.log('sUSD in sUSD', sUsdEffectiveValue.toString() / 1e18)
         let totalValue = await pool.getPoolValue();
         let susdPercentageInPool = sUsdEffectiveValue * 100 / totalValue;
-        console.log('sUSD percentage in pool', susdPercentageInPool);
 
         if (!synth.includes("sUSD")) {
             let synthEffectiveValue = 0;
@@ -129,9 +130,11 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
                     let target = totalValue.mul(BigNumber.bigNumberify(rebalancedSynthPercentageInDebt * 100))
                         .div(BigNumber.bigNumberify(10000)).sub(synthEffectiveValue);
                     if ((synthPercentageInPool - rebalancedSynthPercentageInDebt) < 0) {
+                        console.log("Trading sUSD to " + target.toString() / 1e18 + " " + synth);
                         await pool.exchange('sUSD', target, synth)
                     } else {
                         // swap synth to sUSD
+                        console.log("Trading " + target.toString() / 1e18 + " " + synth + "to sUSD");
                         let synthToExchange = await exchangeRates.getEffectiveValue(
                             'sUSD',
                             target,
