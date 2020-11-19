@@ -75,6 +75,7 @@ setInterval(async () => {
             await checkSynth(result.synth, result.totalSupply, result.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
         }
         let assets = await pool.getAssets();
+        console.log("Checking all other approved assets " + assets);
         for (let a in assets) {
             let assetSynth = assets[a];
             if (!filteredResults.flatMap(f => f.synth).includes(assetSynth)) {

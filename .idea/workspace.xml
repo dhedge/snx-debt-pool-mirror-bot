@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="22f89d01-7bc9-40b7-9307-17e836dd70b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/rebalance.js" beforeDir="false" afterPath="$PROJECT_DIR$/rebalance.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +18,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/rebalance.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="289">
-              <caret line="95" column="12" selection-start-line="95" selection-start-column="12" selection-end-line="95" selection-end-column="12" />
+            <state relative-caret-position="238">
+              <caret line="21" column="12" lean-forward="true" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -51,6 +50,7 @@
       <find>approve</find>
       <find>totalValue</find>
       <find>trade</find>
+      <find>seti</find>
     </findStrings>
     <replaceStrings>
       <replace>SDEF</replace>
@@ -140,12 +140,12 @@
       <option name="presentableId" value="Default" />
       <updated>1605527921378</updated>
       <workItem from="1605527922561" duration="24645000" />
-      <workItem from="1605648403417" duration="16233000" />
+      <workItem from="1605648403417" duration="20017000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="40878000" />
+    <option name="totallyTimeSpent" value="44662000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -161,7 +161,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32936078" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4452871" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3900325" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -453,8 +453,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/rebalance.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="95" column="12" selection-start-line="95" selection-start-column="12" selection-end-line="95" selection-end-column="12" />
+        <state relative-caret-position="238">
+          <caret line="21" column="12" lean-forward="true" selection-start-line="21" selection-start-column="12" selection-end-line="21" selection-end-column="12" />
         </state>
       </provider>
     </entry>
