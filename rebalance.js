@@ -21,6 +21,7 @@ const blockOptions = fromBlock ? {blockTag: Number(fromBlock)} : {};
 
 setInterval(async () => {
     try {
+        console.time('check rebalancing')
         const factory = Factory.initialize()
 
         let exchangeRates = await factory.getExchangeRates()
@@ -89,7 +90,7 @@ setInterval(async () => {
             }
         }
         console.log("Finished checking for rebalancing");
-
+        console.timeEnd('check rebalancing');
     } catch (e) {
         console.log("Error in periodic rebalancing check ", e);
     }
@@ -132,8 +133,8 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
                 try {
                     asset = await pool.getAsset(synth)
                 } catch (e) {
-                    let tx = await pool.addAsset(synth);
-                    await tx.wait(1);
+                    console.log("Approving synth: " + synth);
+                    await pool.addAsset(synth);
                     try {
                         asset = await pool.getAsset(synth);
                     } catch (e) {
