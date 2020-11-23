@@ -19,7 +19,7 @@ const fromBlock = "";
 const blockOptions = fromBlock ? {blockTag: Number(fromBlock)} : {};
 
 
-setTimeout(async () => {
+setInterval(async () => {
     try {
         console.time('check rebalancing')
         const factory = Factory.initialize()
@@ -60,7 +60,7 @@ setTimeout(async () => {
         console.log("Total value of all synths is: " + totalInUSD);
         let filteredResults = [];
         results.forEach(r => {
-            if ((r.totalSupplyInUSD * 100 / totalInUSD) > 2) {
+            if (((r.totalSupplyInUSD * 100 / totalInUSD) > 2) && (!r.rateIsFrozen)) {
                 filteredResults.push(r);
             }
         });
@@ -95,7 +95,7 @@ setTimeout(async () => {
         console.log("Error in periodic rebalancing check ", e);
     }
 
-}, 1 * 60 * process.env.POLL_INTERVAL);
+}, 1000 * 60 * process.env.POLL_INTERVAL);
 
 async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor) {
     try {
