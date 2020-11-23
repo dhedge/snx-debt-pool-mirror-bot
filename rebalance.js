@@ -19,7 +19,7 @@ const fromBlock = "";
 const blockOptions = fromBlock ? {blockTag: Number(fromBlock)} : {};
 
 
-setInterval(async () => {
+setTimeout(async () => {
     try {
         console.time('check rebalancing')
         const factory = Factory.initialize()
@@ -95,7 +95,7 @@ setInterval(async () => {
         console.log("Error in periodic rebalancing check ", e);
     }
 
-}, 1000 * 60 * process.env.POLL_INTERVAL);
+}, 1 * 60 * process.env.POLL_INTERVAL);
 
 async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor) {
     try {
@@ -180,3 +180,13 @@ async function depositSUSD(sUSD, pool) {
     await sUSD.approve(pool.getAddress(), '1000000000000000000000') // Approve 1000sUSD
     await pool.deposit('1000000000000000000000') // Deposit 1000sUSD
 }
+
+
+var express = require("express");
+var app = express();
+const promBundle = require("express-prom-bundle");
+const metricsMiddleware = promBundle({includeMethod: true});
+app.use(metricsMiddleware);
+app.listen(3001, () => {
+    console.log("Server running on port 3001");
+});

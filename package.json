@@ -12,6 +12,9 @@
     "deasync": "^0.1.21",
     "dhedge-sdk": "0.0.1",
     "ethers": "4.0.48",
-    "synthetix-js": "^2.32.2"
+    "synthetix-js": "^2.32.2",
+    "express": "^4.17.1",
+    "express-prom-bundle": "^6.2.0",
+    "prom-client": "^12.0.0"
   }
 }
