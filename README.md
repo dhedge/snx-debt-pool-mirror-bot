@@ -9,7 +9,7 @@ For this purpose only Synths that have a larger than **2% share** in the debt po
 After a Synth is added to the pool, the bot checks if a rebalancing is needed every 10 minutes. If a Synth's debt pool share diverges more than 1% to its share in this fund, the Synth will be rebalanced.  
 
 # Fees
-The fund is sponsored by dHedge and this incurs no management or performance fees. Gas needed to run by the bot is also sponsored by dHedge/
+The fund is sponsored by dHedge and this incurs no management or performance fees. Gas needed to run by the bot is also sponsored by dHedge.
     
 # Other info
 Debt pool details are fetched using [synthetix-js](https://github.com/Synthetixio/synthetix-js) library.  
