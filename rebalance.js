@@ -126,8 +126,8 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
             let totalValue = await pool.getPoolValue();
             let synthPercentageInPool = synthEffectiveValue * 100 / totalValue;
             console.log(synth + 'percentage in pool', synthPercentageInPool);
-            if (Math.abs(synthPercentageInPool - rebalancedSynthPercentageInDebt) > 1) {
-                console.log(synth + ' diverges more than 1%, a rebalance is needed');
+            if (Math.abs(synthPercentageInPool - rebalancedSynthPercentageInDebt) > 2) {
+                console.log(synth + ' diverges more than 2%, a rebalance is needed');
 
                 let asset = null;
                 try {
