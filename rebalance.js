@@ -92,7 +92,7 @@ setInterval(async () => {
         console.log("Finished checking for rebalancing");
         console.timeEnd('check rebalancing');
     } catch (e) {
-        console.log("Error in periodic rebalancing check ", e);
+        console.log("Error in periodic rebalancing check", e);
     }
 
 }, 1000 * 60 * process.env.POLL_INTERVAL);
