@@ -15,6 +15,6 @@
     "express": "^4.17.1",
     "express-prom-bundle": "^6.2.0",
     "prom-client": "^12.0.0",
-    "synthetix-js": "^2.35.4"
+    "synthetix-js": "^2.35.5"
   }
 }
