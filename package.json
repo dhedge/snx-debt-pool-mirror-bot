@@ -10,7 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "deasync": "^0.1.21",
-    "dhedge-sdk": "0.0.1",
+    "dhedge-sdk": "0.0.3",
     "ethers": "4.0.48",
     "express": "^4.17.1",
     "express-prom-bundle": "^6.2.0",
