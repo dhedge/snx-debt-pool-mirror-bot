@@ -70,24 +70,27 @@ setInterval(async () => {
         console.log("Total value of all synths above 2% is: " + totalInUSDAboveTwoPercent);
         let rebalancingFactor = totalInUSD / totalInUSDAboveTwoPercent;
         console.log("rebalancingFactor is: " + rebalancingFactor);
+
+        //TODO
+
+        //Step-1:
+
+        // check if filteredResults has length > 6
+           // If > 6, Then  sort the filteredResults by percentage Share, and chose the top-6
+           // Else, use the 6 Assets as-Is (filtered results may have any number from 1-> 6)
+
+        let assets = await pool.getAssets();
+        
+        // Step-2:
+
+           // loop through Assets in Pool, and check if the Asset is in the FilteredResults
+               // If No, then Sell the Asset which is not-in filtered-result for sUSD And Disable the Asset which is Sold-Off
+               // If Yes, Nothing to-do
+
         for (let r in filteredResults) {
             let result = filteredResults[r];
             console.log("checking synth: " + result.synth);
             await checkSynth(result.synth, result.totalSupply, result.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
-        }
-        let assets = await pool.getAssets();
-        console.log("Checking all other approved assets " + assets);
-        for (let a in assets) {
-            let assetSynth = assets[a];
-            if (!filteredResults.flatMap(f => f.synth).includes(assetSynth)) {
-                for (let r in results) {
-                    let res = results[r];
-                    if (res.synth == assetSynth) {
-                        console.log("checking sub 2% synth: " + assetSynth);
-                        await checkSynth(res.synth, res.totalSupply, res.totalSupplyInUSD, exchangeRates, composition, pool, totalInUSD, rebalancingFactor);
-                    }
-                }
-            }
         }
         console.log("Finished checking for rebalancing");
         console.timeEnd('check rebalancing');
@@ -141,6 +144,7 @@ async function checkSynth(synth, totalSupply, totalSupplyInUSD, exchangeRates, c
                         console.log("Error approving synth: " + synth, e);
                     }
                 }
+
                 if (asset) {
                     rebalancedSynthPercentageInDebt = Math.round((rebalancedSynthPercentageInDebt + Number.EPSILON) * 100) / 100;
                     let target = totalValue.mul(BigNumber.bigNumberify(rebalancedSynthPercentageInDebt * 100))
