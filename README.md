@@ -13,5 +13,4 @@ The fund is sponsored by dHedge and this incurs no management or performance fee
     
 # Other info
 Debt pool details are fetched using [synthetix-js](https://github.com/Synthetixio/synthetix-js) library.  
- 
-   
+

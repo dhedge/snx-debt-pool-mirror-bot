@@ -75,7 +75,7 @@ setInterval(async () => {
 
         //Step-1:
 
-        // check if filteredResults has length > 6
+        // check if filteredResults has length > 6 (put 6 as loaded value from .env variable)
            // If > 6, Then  sort the filteredResults by percentage Share, and chose the top-6
            // Else, use the 6 Assets as-Is (filtered results may have any number from 1-> 6)
 
@@ -87,6 +87,19 @@ setInterval(async () => {
                // If No, then Sell the Asset which is not-in filtered-result for sUSD And Disable the Asset which is Sold-Off
                // If Yes, Nothing to-do
 
+        // Edge-cases:
+           // Scenario-1: 
+               // Given:
+               // FilteredResluts is 5 (Assets with > 2%)
+               // Pool has 6 Assets
+
+               //When:
+               // All the top 5 Assets already exists in the Pool,
+            
+               //Then
+               //we don't need to delete the 6th Asset in the Pool
+
+               
         for (let r in filteredResults) {
             let result = filteredResults[r];
             console.log("checking synth: " + result.synth);
